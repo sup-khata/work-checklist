@@ -264,6 +264,28 @@
     gap: 8px;
     margin-top: 8px;
   }
+
+  /* スマホ幅ではツールバーのボタンを2列×2行にきれいに揃える */
+  @media (max-width: 480px) {
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .toolbar button {
+      width: 100%;
+      margin-left: 0;
+      font-size: 0.8rem;
+      padding: 8px 6px;
+    }
+
+    /* 日付を右寄せにすると狭い画面では浮いてしまうため、独立した行にする */
+    .work-date {
+      flex-basis: 100%;
+      margin-left: 0;
+      text-align: left;
+    }
+  }
 </style>
 </head>
 <body>
