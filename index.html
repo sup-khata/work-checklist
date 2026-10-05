@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>作業チェックリスト</title>
+<style>
+  :root {
+    --color-primary: #2563eb;
+    --color-primary-dark: #1d4ed8;
+    --color-danger: #dc2626;
+    --color-danger-dark: #b91c1c;
+    --color-gray: #6b7280;
+    --color-bg: #f4f6f9;
+    --color-card: #ffffff;
+    --color-border: #e2e8f0;
+    --color-text: #1f2937;
+    --color-text-sub: #6b7280;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--color-bg);
+    color: var(--color-text);
+    padding: 16px;
+  }
+
+  h1 {
+    font-size: 1.3rem;
+    margin: 0 0 16px;
+    text-align: center;
+  }
+
+  .title-input {
+    display: block;
+    width: 100%;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+    margin: 0 0 8px;
+    padding: 4px 8px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--color-text);
+    font-family: inherit;
+  }
+  .title-input:hover { border-color: var(--color-border); }
+  .title-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    background: #fff;
+  }
+
+  .wrap {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    margin-bottom: 12px;
+  }
+
+  .count-row { text-align: center; margin-bottom: 10px; }
+
+  .count-text {
+    font-weight: bold;
+    color: var(--color-primary);
+    font-size: 0.9rem;
+  }
+  .count-text .num { font-size: 1.1rem; }
+
+  button {
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    padding: 10px 14px;
+    transition: background-color 0.15s ease;
+  }
+
+  .btn-primary { background: var(--color-primary); color: #fff; }
+  .btn-primary:hover { background: var(--color-primary-dark); }
+
+  .btn-secondary { background: #e5e7eb; color: var(--color-text); }
+  .btn-secondary:hover { background: #d1d5db; }
+
+  .btn-danger { background: var(--color-danger); color: #fff; }
+  .btn-danger:hover { background: var(--color-danger-dark); }
+
+  .btn-small { padding: 6px 10px; font-size: 0.8rem; }
+
+  .toolbar .btn-danger { margin-left: auto; }
+
+  .card {
+    background: var(--color-card);
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  }
+
+  .card-row1 {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-row2 {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .badge {
+    display: inline-block;
+    font-size: 0.75rem;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: #eef2ff;
+    color: #3730a3;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .badge-status-未着手 { background: #f3f4f6; color: #374151; }
+  .badge-status-進行中 { background: #fef3c7; color: #92400e; }
+  .badge-status-完了 { background: #d1fae5; color: #065f46; }
+
+  .badge-select {
+    border: none;
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  .work-date { font-size: 0.8rem; color: var(--color-text-sub); margin-left: auto; flex-shrink: 0; }
+
+  .work-name {
+    font-weight: bold;
+    font-size: 1rem;
+    flex: 1 1 auto;
+    min-width: 60px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .time-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    font-size: 0.8rem;
+    color: var(--color-text-sub);
+  }
+
+  .card-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  .btn-icon { padding: 6px 10px; font-size: 1rem; line-height: 1; }
+
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .order-number {
+    font-weight: bold;
+    color: var(--color-primary);
+    min-width: 1.5em;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .drag-handle {
+    cursor: grab;
+    touch-action: none; /* スマホでドラッグ中に画面がスクロールしてしまうのを防ぐ */
+    padding: 2px 8px;
+    font-size: 1.1rem;
+    color: var(--color-text-sub);
+    user-select: none;
+    flex-shrink: 0;
+  }
+
+  .card.dragging {
+    opacity: 0.95;
+    transform: translateX(-10px) scale(1.03);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.2);
+    border-color: var(--color-primary);
+    cursor: grabbing;
+    z-index: 5;
+  }
+
+  .drag-handle:active { cursor: grabbing; }
+
+  /* ドラッグ中に、元のカードが入る予定地を示す枠 */
+  .drag-placeholder {
+    border: 2px dashed var(--color-border);
+    border-radius: 12px;
+    margin-bottom: 12px;
+    background: rgba(37, 99, 235, 0.05);
+  }
+
+  .empty {
+    text-align: center;
+    color: var(--color-text-sub);
+    padding: 32px 16px;
+    font-size: 0.9rem;
+  }
+
+  /* モーダル共通 */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    z-index: 10;
+  }
+  .overlay[hidden] { display: none; }
+
+  .modal {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    width: 100%;
+    max-width: 420px;
+  }
+
+  .modal h2 { font-size: 1.05rem; margin: 0 0 16px; }
+
+  .field { margin-bottom: 14px; }
+  .field label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--color-text-sub);
+    margin-bottom: 4px;
+  }
+  .field select,
+  .field input[type="text"],
+  .field textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-family: inherit;
+  }
+  .field textarea { resize: vertical; min-height: 60px; }
+
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <input type="text" id="titleInput" class="title-input" value="作業チェックリスト" aria-label="タイトル">
+
+  <div class="count-row"><span class="count-text" id="countBadge"></span></div>
+
+  <div class="toolbar">
+    <button class="btn-primary" id="openCreateBtn">＋ 新規登録</button>
+    <button class="btn-secondary" id="exportCsvBtn">CSVエクスポート</button>
+    <button class="btn-secondary" id="importCsvBtn">CSVインポート</button>
+    <input type="file" id="csvFileInput" accept=".csv,text/csv" hidden>
+    <button class="btn-danger" id="deleteAllBtn">全件削除</button>
+  </div>
+
+  <div id="listWrap"></div>
+</div>
+
+<!-- 登録・編集フォーム -->
+<div class="overlay" id="formOverlay" hidden>
+  <div class="modal">
+    <h2 id="formTitle">新規登録</h2>
+    <div class="field">
+      <label for="f-workName">作業名</label>
+      <input type="text" id="f-workName" placeholder="例：請求書レイアウト修正">
+    </div>
+    <div class="field">
+      <label for="f-note">備考</label>
+      <textarea id="f-note" placeholder="補足があれば入力"></textarea>
+    </div>
+    <div class="field">
+      <label for="f-status">ステータス</label>
+      <select id="f-status">
+        <option value="未着手">未着手</option>
+        <option value="進行中">進行中</option>
+        <option value="完了">完了</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="formCancelBtn">キャンセル</button>
+      <button class="btn-primary" id="formSaveBtn">保存</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// localStorage に保存するためのキー
+const STORAGE_KEY = 'workChecklistItems';
+const TITLE_KEY = 'workChecklistTitle';
+const DEFAULT_TITLE = '作業チェックリスト';
+
+function loadTitle() {
+  return localStorage.getItem(TITLE_KEY) || DEFAULT_TITLE;
+}
+
+function saveTitle(title) {
+  localStorage.setItem(TITLE_KEY, title);
+}
+
+// ファイル名として使えない文字（\ / : * ? " < > |）を置き換える
+function sanitizeFilename(name) {
+  const trimmed = (name || '').trim().replace(/[\\/:*?"<>|]/g, '_');
+  return trimmed || DEFAULT_TITLE;
+}
+
+function loadItems() {
+  let data;
+  try {
+    data = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+  } catch (e) {
+    data = [];
+  }
+  // 並び順（order）を持たない古いデータのための補完
+  let needsSave = false;
+  data.forEach((item, index) => {
+    if (typeof item.order !== 'number') {
+      item.order = index;
+      needsSave = true;
+    }
+  });
+  if (needsSave) saveItems(data);
+  return data;
+}
+
+function saveItems(items) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+}
+
+let items = loadItems();
+let editingId = null; // null なら新規登録、値があれば編集中のレコードID
+let dragging = null; // ドラッグ中のカード要素
+
+function pad2(n) { return String(n).padStart(2, '0'); }
+
+// ローカル時刻の日付を 'YYYY-MM-DD' 形式にする（UTC変換によるズレを避けるため toISOString は使わない）
+function todayDateString() {
+  const d = new Date();
+  return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+}
+
+function formatTime(iso) {
+  if (!iso) return '-';
+  const d = new Date(iso);
+  return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+}
+
+function formatDuration(startIso, endIso) {
+  if (!startIso || !endIso) return '-';
+  const totalSec = Math.max(0, Math.round((new Date(endIso) - new Date(startIso)) / 1000));
+  const totalMin = Math.round(totalSec / 60);
+  const h = Math.floor(totalMin / 60);
+  const m = totalMin % 60;
+  // 0分になる場合だけ、分の代わりに秒を表示する
+  if (h === 0 && m === 0) return `${totalSec}秒`;
+  if (h === 0) return `${m}分`;
+  if (m === 0) return `${h}時間`;
+  return `${h}時間${m}分`;
+}
+
+// 開始してから現在までの経過時間を HH:MM:SS 形式で返す（進行中カードの秒ごと更新に使用）
+function liveElapsedText(startIso) {
+  const totalSec = Math.max(0, Math.floor((Date.now() - new Date(startIso)) / 1000));
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = totalSec % 60;
+  return `${pad2(h)}:${pad2(m)}:${pad2(s)}`;
+}
+
+// 「開始: 」欄の表示を更新する。進行中なら経過時間を付けて秒ごとに表示する
+function updateStartSpan(span, item) {
+  if (item.startAt && !item.endAt) {
+    span.textContent = `開始: ${formatTime(item.startAt)}（経過 ${liveElapsedText(item.startAt)}）`;
+  } else {
+    span.textContent = `開始: ${formatTime(item.startAt)}`;
+  }
+}
+
+function el(tag, className, text) {
+  const node = document.createElement(tag);
+  if (className) node.className = className;
+  if (text !== undefined) node.textContent = text;
+  return node;
+}
+
+function render() {
+  const wrap = document.getElementById('listWrap');
+  wrap.innerHTML = '';
+
+  document.getElementById('countBadge').innerHTML =
+    `登録件数：<span class="num">${items.length}</span>件`;
+
+  if (items.length === 0) {
+    wrap.appendChild(el('div', 'empty', 'まだ作業が登録されていません。「新規登録」から追加してください。'));
+    return;
+  }
+
+  // 手動で並べ替えた順（order）に表示
+  const sorted = [...items].sort((a, b) => a.order - b.order);
+
+  sorted.forEach((item, index) => {
+    const card = el('div', 'card');
+    card.dataset.id = item.id;
+
+    // 1行目：番号・ハンドル・ステータス・作業名・作業日
+    const row1 = el('div', 'card-row1');
+    row1.appendChild(el('span', 'order-number', `${index + 1}`));
+    const handle = el('span', 'drag-handle', '⋮⋮');
+    row1.appendChild(handle);
+    const statusSelect = document.createElement('select');
+    statusSelect.className = `badge badge-select badge-status-${item.status}`;
+    ['未着手', '進行中', '完了'].forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s;
+      opt.textContent = s;
+      if (s === item.status) opt.selected = true;
+      statusSelect.appendChild(opt);
+    });
+    statusSelect.addEventListener('change', () => {
+      item.status = statusSelect.value;
+      saveItems(items);
+      render();
+    });
+    row1.appendChild(statusSelect);
+
+    const nameSpan = el('span', 'work-name', item.note ? `${item.workName} 📝` : item.workName);
+    if (item.note) nameSpan.title = `備考: ${item.note}`;
+    row1.appendChild(nameSpan);
+
+    row1.appendChild(el('span', 'work-date', item.workDate || '-'));
+    card.appendChild(row1);
+
+    // 2行目：時間情報とボタン
+    const row2 = el('div', 'card-row2');
+
+    const timeInfo = el('div', 'time-info');
+    const startSpan = el('span', null, '');
+    startSpan.dataset.startFor = item.id;
+    updateStartSpan(startSpan, item);
+    timeInfo.appendChild(startSpan);
+    timeInfo.appendChild(el('span', null, `終了: ${formatTime(item.endAt)}`));
+    timeInfo.appendChild(el('span', null, `所要時間: ${formatDuration(item.startAt, item.endAt)}`));
+    row2.appendChild(timeInfo);
+
+    const actions = el('div', 'card-actions');
+
+    const startBtn = el('button', 'btn-primary btn-icon', '▶');
+    startBtn.title = '開始';
+    startBtn.disabled = !!item.startAt || item.status === '完了';
+    startBtn.addEventListener('click', () => {
+      item.startAt = new Date().toISOString();
+      item.status = '進行中';
+      saveItems(items);
+      render();
+    });
+    actions.appendChild(startBtn);
+
+    const endBtn = el('button', 'btn-primary btn-icon', '■');
+    endBtn.title = '終了';
+    endBtn.disabled = !item.startAt || !!item.endAt;
+    endBtn.addEventListener('click', () => {
+      item.endAt = new Date().toISOString();
+      item.status = '完了';
+      saveItems(items);
+      render();
+    });
+    actions.appendChild(endBtn);
+
+    const resetBtn = el('button', 'btn-secondary btn-icon', '↺');
+    resetBtn.title = 'リセット';
+    resetBtn.addEventListener('click', () => {
+      item.status = '未着手';
+      item.startAt = null;
+      item.endAt = null;
+      saveItems(items);
+      render();
+    });
+    actions.appendChild(resetBtn);
+
+    const editBtn = el('button', 'btn-secondary btn-icon', '✎');
+    editBtn.title = '編集';
+    editBtn.addEventListener('click', () => openForm(item.id));
+    actions.appendChild(editBtn);
+
+    const deleteBtn = el('button', 'btn-danger btn-icon', '🗑');
+    deleteBtn.title = '削除';
+    deleteBtn.addEventListener('click', () => {
+      if (!confirm(`「${item.workName}」を削除します。よろしいですか？`)) return;
+      items = items.filter(i => i.id !== item.id);
+      saveItems(items);
+      render();
+    });
+    actions.appendChild(deleteBtn);
+
+    row2.appendChild(actions);
+    card.appendChild(row2);
+    wrap.appendChild(card);
+    attachDragHandlers(card, handle);
+  });
+}
+
+// ドラッグハンドルを押して上下に動かすと、カードの並び順を入れ替える
+// ドラッグ中はハンドルではなく document 全体で指・マウスの動きを監視する
+// （ドラッグ対象の要素自体を動かしながら setPointerCapture を使うと、
+//   ブラウザによっては捕捉が外れて途中で動かなくなることがあるため）
+//
+// カード自体は position:fixed にして指・マウスに追随させ、
+// 元の場所には高さの揃った「placeholder（仮の枠）」を置いて、
+// それを動かすことで他のカードの並びを入れ替える。
+function attachDragHandlers(card, handle) {
+  handle.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    const listWrap = document.getElementById('listWrap');
+    const rect = card.getBoundingClientRect();
+    const offsetY = e.clientY - rect.top;
+
+    const placeholder = el('div', 'drag-placeholder');
+    placeholder.style.height = `${rect.height}px`;
+    listWrap.insertBefore(placeholder, card);
+
+    card.style.position = 'fixed';
+    card.style.top = `${rect.top}px`;
+    card.style.left = `${rect.left}px`;
+    card.style.width = `${rect.width}px`;
+
+    dragging = card;
+    card.classList.add('dragging');
+
+    const onMove = (ev) => {
+      if (dragging !== card) return;
+      if (ev.cancelable) ev.preventDefault();
+
+      // カードの縦位置を指・マウスにそのまま追随させる
+      card.style.top = `${ev.clientY - offsetY}px`;
+
+      // placeholder（挿入予定地）を指・マウスの位置に応じて動かす
+      const siblings = [...listWrap.children].filter(c => c !== card && c !== placeholder);
+      const y = ev.clientY;
+      const target = siblings.find(sib => {
+        const r = sib.getBoundingClientRect();
+        return y < r.top + r.height / 2;
+      });
+      if (target) {
+        listWrap.insertBefore(placeholder, target);
+      } else {
+        listWrap.appendChild(placeholder);
+      }
+    };
+
+    const onUp = () => {
+      document.removeEventListener('pointermove', onMove);
+      document.removeEventListener('pointerup', onUp);
+      document.removeEventListener('pointercancel', onUp);
+      if (dragging !== card) return;
+      dragging = null;
+
+      // カードを placeholder の場所に戻し、placeholder は取り除く
+      listWrap.insertBefore(card, placeholder);
+      placeholder.remove();
+      card.classList.remove('dragging');
+      card.style.position = '';
+      card.style.top = '';
+      card.style.left = '';
+      card.style.width = '';
+
+      [...listWrap.querySelectorAll('.card')].forEach((c, index) => {
+        const it = items.find(i => i.id === c.dataset.id);
+        if (it) it.order = index;
+      });
+      saveItems(items);
+      render();
+    };
+
+    document.addEventListener('pointermove', onMove);
+    document.addEventListener('pointerup', onUp);
+    document.addEventListener('pointercancel', onUp);
+  });
+}
+
+function openForm(id) {
+  editingId = id || null;
+  const overlay = document.getElementById('formOverlay');
+  const title = document.getElementById('formTitle');
+  const nameInput = document.getElementById('f-workName');
+  const noteInput = document.getElementById('f-note');
+  const statusSel = document.getElementById('f-status');
+
+  if (editingId) {
+    const item = items.find(i => i.id === editingId);
+    title.textContent = '編集';
+    nameInput.value = item.workName;
+    noteInput.value = item.note;
+    statusSel.value = item.status;
+  } else {
+    title.textContent = '新規登録';
+    nameInput.value = '';
+    noteInput.value = '';
+    statusSel.value = '未着手';
+  }
+
+  overlay.hidden = false;
+  nameInput.focus();
+}
+
+function closeForm() {
+  document.getElementById('formOverlay').hidden = true;
+  editingId = null;
+}
+
+function saveForm() {
+  const workName = document.getElementById('f-workName').value.trim();
+  const note = document.getElementById('f-note').value.trim();
+  const status = document.getElementById('f-status').value;
+
+  if (!workName) {
+    alert('作業名を入力してください。');
+    return;
+  }
+
+  if (editingId) {
+    const item = items.find(i => i.id === editingId);
+    item.workName = workName;
+    item.note = note;
+    item.status = status;
+    item.updatedAt = new Date().toISOString();
+  } else {
+    const now = new Date().toISOString();
+    const maxOrder = items.length ? Math.max(...items.map(i => i.order)) : -1;
+    items.push({
+      id: (crypto.randomUUID ? crypto.randomUUID() : String(Date.now())),
+      workDate: todayDateString(), // 作成時の日付を自動セット（以後変更不可）
+      workName,
+      note,
+      status,
+      startAt: null,
+      endAt: null,
+      order: maxOrder + 1, // 新規登録は一番下に追加
+      createdAt: now,
+      updatedAt: now,
+    });
+  }
+
+  saveItems(items);
+  closeForm();
+  render();
+}
+
+function csvEscape(value) {
+  return `"${String(value).replace(/"/g, '""')}"`;
+}
+
+function exportCsv() {
+  const header = ['作業日', '作業名', '備考', '開始時間', '終了時間', '所要時間', 'ステータス'];
+  const rows = [...items]
+    .sort((a, b) => a.order - b.order)
+    .map(item => [
+      item.workDate,
+      item.workName,
+      item.note,
+      formatTime(item.startAt),
+      formatTime(item.endAt),
+      formatDuration(item.startAt, item.endAt),
+      item.status,
+    ]);
+
+  const csvBody = [header, ...rows].map(row => row.map(csvEscape).join(',')).join('\r\n');
+  // Excelで文字化けしないよう先頭にBOMを付与
+  const blob = new Blob(['﻿' + csvBody], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${sanitizeFilename(titleInput.value)}_${todayDateString()}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+// CSVの1行を引用符（ダブルクォート）に対応しながら分割する簡易パーサー
+function parseCsv(text) {
+  if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1); // 先頭のBOMを除去
+  const rows = [];
+  let row = [];
+  let field = '';
+  let inQuotes = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (inQuotes) {
+      if (c === '"') {
+        if (text[i + 1] === '"') { field += '"'; i++; }
+        else { inQuotes = false; }
+      } else {
+        field += c;
+      }
+    } else if (c === '"') {
+      inQuotes = true;
+    } else if (c === ',') {
+      row.push(field);
+      field = '';
+    } else if (c === '\r') {
+      // 無視（続く \n で改行を処理する）
+    } else if (c === '\n') {
+      row.push(field);
+      rows.push(row);
+      row = [];
+      field = '';
+    } else {
+      field += c;
+    }
+  }
+  if (field.length > 0 || row.length > 0) {
+    row.push(field);
+    rows.push(row);
+  }
+  return rows.filter(r => !(r.length === 1 && r[0] === ''));
+}
+
+function importCsvText(text) {
+  const rows = parseCsv(text);
+  if (rows.length <= 1) {
+    alert('読み込めるデータがありませんでした。');
+    return;
+  }
+
+  const dataRows = rows.slice(1); // 1行目（見出し）は読み飛ばす
+  let maxOrder = items.length ? Math.max(...items.map(i => i.order)) : -1;
+  let imported = 0;
+  let skipped = 0;
+
+  dataRows.forEach(cols => {
+    // 取り込むのは「作業名」「備考」だけ。日付・時刻・ステータスは引き継がない
+    const [, workNameRaw, noteRaw] = cols;
+    const workName = (workNameRaw || '').trim();
+    if (!workName) { skipped++; return; }
+
+    const now = new Date().toISOString();
+
+    maxOrder += 1;
+    items.push({
+      id: (crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${imported}`),
+      workDate: todayDateString(), // インポートした日の日付にする
+      workName,
+      note: (noteRaw || '').trim(),
+      status: '未着手',
+      startAt: null,
+      endAt: null,
+      order: maxOrder,
+      createdAt: now,
+      updatedAt: now,
+    });
+    imported++;
+  });
+
+  saveItems(items);
+  render();
+  alert(`${imported}件を取り込みました。${skipped > 0 ? `（作業名が空の${skipped}件はスキップしました）` : ''}`);
+}
+
+const titleInput = document.getElementById('titleInput');
+titleInput.value = loadTitle();
+titleInput.addEventListener('input', () => {
+  saveTitle(titleInput.value);
+});
+
+document.getElementById('openCreateBtn').addEventListener('click', () => openForm(null));
+document.getElementById('formCancelBtn').addEventListener('click', closeForm);
+document.getElementById('formSaveBtn').addEventListener('click', saveForm);
+document.getElementById('exportCsvBtn').addEventListener('click', exportCsv);
+document.getElementById('importCsvBtn').addEventListener('click', () => {
+  document.getElementById('csvFileInput').click();
+});
+document.getElementById('csvFileInput').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  // 選んだファイル名（拡張子を除いた部分）をタイトルにする
+  const baseName = file.name.replace(/\.csv$/i, '');
+  titleInput.value = baseName;
+  saveTitle(baseName);
+
+  const reader = new FileReader();
+  reader.onload = () => importCsvText(reader.result);
+  reader.readAsText(file, 'utf-8');
+  e.target.value = ''; // 同じファイルを連続で選び直せるようにする
+});
+document.getElementById('deleteAllBtn').addEventListener('click', () => {
+  if (items.length === 0) return;
+  if (!confirm('登録されている全ての作業を削除します。この操作は元に戻せません。本当によろしいですか？')) return;
+  items = [];
+  saveItems(items);
+  titleInput.value = DEFAULT_TITLE;
+  saveTitle(DEFAULT_TITLE);
+  render();
+});
+
+render();
+
+// 進行中カードの「経過」表示を1秒ごとに更新する
+setInterval(() => {
+  document.querySelectorAll('[data-start-for]').forEach(span => {
+    const item = items.find(i => i.id === span.dataset.startFor);
+    if (item) updateStartSpan(span, item);
+  });
+}, 1000);
+</script>
+
+</body>
+</html>
