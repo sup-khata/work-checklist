@@ -288,6 +288,19 @@
       padding: 8px 6px;
     }
 
+    /* カード内のボタンは指で押しやすいよう、1行に均等幅で並べて大きくする（高さ44px以上が目安） */
+    .card-actions {
+      flex-basis: 100%;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+    .btn-icon {
+      min-height: 44px;
+      font-size: 1.4rem;
+      padding: 8px 0;
+    }
+
     /* 日付を右寄せにすると狭い画面では浮いてしまうため、独立した行にする */
     .work-date {
       flex-basis: 100%;
