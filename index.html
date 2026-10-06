@@ -6,16 +6,15 @@
 <title>作業チェックリスト</title>
 <style>
   :root {
-    --color-primary: #2563eb;
-    --color-primary-dark: #1d4ed8;
-    --color-danger: #dc2626;
-    --color-danger-dark: #b91c1c;
-    --color-gray: #6b7280;
-    --color-bg: #f4f6f9;
+    --color-primary: #2f9e86;
+    --color-primary-dark: #257e6c;
+    --color-danger: #d1453b;
+    --color-danger-dark: #b23930;
+    --color-bg: #f7f7f5;
     --color-card: #ffffff;
-    --color-border: #e2e8f0;
-    --color-text: #1f2937;
-    --color-text-sub: #6b7280;
+    --color-border: #e3e2e0;
+    --color-text: #37352f;
+    --color-text-sub: #9b9a97;
   }
 
   * { box-sizing: border-box; }
@@ -71,29 +70,37 @@
   .count-row { text-align: center; margin-bottom: 10px; }
 
   .count-text {
-    font-weight: bold;
-    color: var(--color-primary);
+    font-weight: 600;
+    color: var(--color-text-sub);
     font-size: 0.9rem;
   }
-  .count-text .num { font-size: 1.1rem; }
+  .count-text .num { font-size: 1.1rem; color: var(--color-text); }
 
   button {
     cursor: pointer;
-    border: none;
-    border-radius: 8px;
+    border: 1px solid transparent;
+    border-radius: 6px;
     font-size: 0.9rem;
     padding: 10px 14px;
-    transition: background-color 0.15s ease;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
   }
 
   .btn-primary { background: var(--color-primary); color: #fff; }
   .btn-primary:hover { background: var(--color-primary-dark); }
 
-  .btn-secondary { background: #e5e7eb; color: var(--color-text); }
-  .btn-secondary:hover { background: #d1d5db; }
+  .btn-secondary {
+    background: var(--color-card);
+    color: var(--color-text);
+    border-color: var(--color-border);
+  }
+  .btn-secondary:hover { background: #f0efed; }
 
-  .btn-danger { background: var(--color-danger); color: #fff; }
-  .btn-danger:hover { background: var(--color-danger-dark); }
+  .btn-danger {
+    background: var(--color-card);
+    color: var(--color-danger);
+    border-color: var(--color-border);
+  }
+  .btn-danger:hover { background: #fbeceb; border-color: var(--color-danger); }
 
   .btn-small { padding: 6px 10px; font-size: 0.8rem; }
 
@@ -102,10 +109,10 @@
   .card {
     background: var(--color-card);
     border: 1px solid var(--color-border);
-    border-radius: 12px;
+    border-radius: 10px;
     padding: 14px 16px;
-    margin-bottom: 12px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    margin-bottom: 10px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
     transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
   }
 
@@ -129,16 +136,16 @@
     display: inline-block;
     font-size: 0.75rem;
     padding: 3px 8px;
-    border-radius: 999px;
-    background: #eef2ff;
-    color: #3730a3;
+    border-radius: 6px;
+    background: var(--color-bg);
+    color: var(--color-text-sub);
     white-space: nowrap;
     flex-shrink: 0;
   }
 
-  .badge-status-未着手 { background: #f3f4f6; color: #374151; }
-  .badge-status-進行中 { background: #fef3c7; color: #92400e; }
-  .badge-status-完了 { background: #d1fae5; color: #065f46; }
+  .badge-status-未着手 { background: #f1f0ee; color: #787774; }
+  .badge-status-進行中 { background: #ddebf1; color: #337ea9; }
+  .badge-status-完了 { background: #ddedea; color: #448361; }
 
   .badge-select {
     border: none;
@@ -173,8 +180,8 @@
   button:disabled { opacity: 0.4; cursor: not-allowed; }
 
   .order-number {
-    font-weight: bold;
-    color: var(--color-primary);
+    font-weight: 600;
+    color: var(--color-text-sub);
     min-width: 1.5em;
     text-align: right;
     flex-shrink: 0;
@@ -193,7 +200,7 @@
   .card.dragging {
     opacity: 0.95;
     transform: translateX(-10px) scale(1.03);
-    box-shadow: 0 10px 24px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
     border-color: var(--color-primary);
     cursor: grabbing;
     z-index: 5;
@@ -204,9 +211,9 @@
   /* ドラッグ中に、元のカードが入る予定地を示す枠 */
   .drag-placeholder {
     border: 2px dashed var(--color-border);
-    border-radius: 12px;
-    margin-bottom: 12px;
-    background: rgba(37, 99, 235, 0.05);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    background: rgba(47, 158, 134, 0.06);
   }
 
   .empty {
