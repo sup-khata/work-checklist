@@ -6,6 +6,12 @@
 
 export async function onRequest(context) {
   const { request, env, next } = context;
+
+  // robots.txt だけは認証なしで返す（検索エンジンが「登録しないで」の指示を読めるようにする）
+  if (new URL(request.url).pathname === '/robots.txt') {
+    return next();
+  }
+
   const expectedUser = env.BASIC_USER;
   const expectedPass = env.BASIC_PASS;
 
